@@ -43,15 +43,7 @@
                                     <span>Primary caregiver name: </span>
                                 </b-col>
                                 <b-col class="col-6">
-                                    <span>John</span>
-                                </b-col>
-                            </b-row>
-                            <b-row>
-                                <b-col class="col-6">
-                                    <span>Relationship with client: </span>
-                                </b-col>
-                                <b-col class="col-6">
-                                    <span>Mother</span>
+                                    <span>{{ termAndConditionData.primaryCaregiverName }}</span>
                                 </b-col>
                             </b-row>
                             <b-row>
@@ -59,7 +51,15 @@
                                     <span>Client name: </span>
                                 </b-col>
                                 <b-col class="col-6">
-                                    <span>Raymond</span>
+                                    <span>{{ termAndConditionData.clientName }}</span>
+                                </b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col class="col-6">
+                                    <span>Relationship with client: </span>
+                                </b-col>
+                                <b-col class="col-6">
+                                    <span>{{ termAndConditionData.relationshipWithClient }}</span>
                                 </b-col>
                             </b-row>
                         </b-col>
@@ -101,7 +101,7 @@
                                     <span>Contact Number: </span>
                                </b-col> 
                                <b-col class="col-6">
-                                    <span>012345678</span>
+                                    <span>{{ signature.contactNo }}</span>
                                </b-col> 
                             </b-row>
                             <b-row>
@@ -109,7 +109,7 @@
                                      <span>Signature Date: </span>
                                 </b-col> 
                                 <b-col class="col-6">
-                                     <span>11/11/2023</span>
+                                     <span>{{ signature.date }}</span>
                                 </b-col> 
                              </b-row>
                         </b-col>
@@ -119,7 +119,7 @@
                                     <span>Signature: </span>
                                 </b-col>
                                 <b-col class="col-6">
-                                    <img :src="signatureBase64" alt="Signature">
+                                    <img :src="signature.signatureBase64" alt="Signature">
                                 </b-col>
                             </b-row>
                         </b-col>
@@ -145,7 +145,16 @@
                 data() {
                     return {
                         isClientHasConsentForm: false,
-                        signatureBase64: null,
+                        termAndConditionData: {
+                            primaryCaregiverName: null,
+                            relationshipWithClient: null,
+                            clientName: null,
+                        },
+                        signature: {
+                            contactNo: null,
+                            date: null,
+                            signatureBase64: null,
+                        }
                     }
                 },
                 methods: {
@@ -166,7 +175,7 @@
                     async getConsentFormSignature(clientNric){
                         const entityLogicalName = "crb5c_fowconsentagreement";
                         const options = new URLSearchParams({
-                            $select:'crb5c_signatureimagenew',
+                            $select:'crb5c_caregivername, crb5c_clientname, crb5c_relationship, crb5c_signaturecontactno, crb5c_signaturedate, crb5c_signatureimagenew',
                             $filter:`crb5c_clientnric eq '${clientNric}'`,
                         });
 
@@ -193,8 +202,19 @@
                         }
 
                         this.isClientHasConsentForm = true;
+                        
 
-                        this.signatureBase64 = `data:image/png;base64,${consentFormInfo.crb5c_signatureimagenew}`;
+                        // set term and condition data
+                        const { crb5c_caregivername, crb5c_clientname, crb5c_relationship } = consentFormInfo;
+                        this.termAndConditionData.primaryCaregiverName = crb5c_caregivername;
+                        this.termAndConditionData.relationshipWithClient = crb5c_relationship;
+                        this.termAndConditionData.clientName = crb5c_clientname;
+
+                        // set signature
+                        const { crb5c_signaturecontactno, crb5c_signaturedate, crb5c_signatureimagenew } = consentFormInfo;
+                        this.signature.contactNo = crb5c_signaturecontactno;
+                        this.signature.date = dayjs(crb5c_signaturedate).format("D/M/YYYY");
+                        this.signature.signatureBase64 = `data:image/png;base64,${crb5c_signatureimagenew}`;
                         // this.signatureBase64 = consentFormInfo.crb5c_signatureimagenew;
 
                     } catch (error) {
