@@ -1,0 +1,216 @@
+<html><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeeuroFit</title>
+    <!-- Required Stylesheets -->
+    <link href="https://unpkg.com/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css">
+
+    <!-- Required scripts -->
+    <script src="https://unpkg.com/vue@2.7.10/dist/vue.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
+
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- dayjs -->
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.7/dayjs.min.js"></script>
+    
+<meta></head>
+
+<body onfocusout="parent.setEmailRange();" style="overflow-wrap: break-word;" data-new-gr-c-s-loaded="14.1136.0" data-new-gr-c-s-check-loaded="14.1136.0" data-gr-ext-installed="">
+    <div id="app" style="font-family: undefined;">Loading...</div>
+    <script id="appTemplate" type="text/template">
+        <b-container>
+            <b-row class="mb-4">
+                <b-col class="col-12">
+                    <span class="font-weight-bold">CONSENT AND DECLARATION</span>
+                </b-col>
+            </b-row>
+            <b-row v-if="isClientHasConsentForm">
+                <b-col class="col-12">
+                    <b-row class="mb-3">
+                        <b-col class="col-12">
+                            <b-row>
+                                <b-col class="col-12">
+                                    <span class="font-weight-bold">TERMS AND CONDITIONS OF ADMISSION</span>
+                                </b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col class="col-6">
+                                    <span>Primary caregiver name: </span>
+                                </b-col>
+                                <b-col class="col-6">
+                                    <span>John</span>
+                                </b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col class="col-6">
+                                    <span>Relationship with client: </span>
+                                </b-col>
+                                <b-col class="col-6">
+                                    <span>Mother</span>
+                                </b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col class="col-6">
+                                    <span>Client name: </span>
+                                </b-col>
+                                <b-col class="col-6">
+                                    <span>Raymond</span>
+                                </b-col>
+                            </b-row>
+                        </b-col>
+                    </b-row>
+                    <!-- <b-row class="mb-3">
+                        <b-col class="col-12">
+                            <b-row>
+                                <b-col class="col-12">
+                                    <span class="font-weight-bold">CONSENT AND DECLARATION</span>
+                                </b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col class="col-6">
+                                    <span>Client Name: </span>
+                                </b-col>
+                                <b-col class="col-6">
+                                    <span>Raymond</span>
+                                </b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col class="col-6">
+                                    <span>Relationship: </span>
+                                </b-col>
+                                <b-col class="col-6">
+                                    <span>Father</span>
+                                </b-col>
+                            </b-row>
+                        </b-col>
+                    </b-row> -->
+                </b-col>
+                <b-col class="col-12">
+                    <b-row>
+                        <b-col class="col-12">
+                            <span>Signature information</span>
+                        </b-col>
+                        <b-col class="col-12">
+                            <b-row>
+                               <b-col class="col-6">
+                                    <span>Contact Number: </span>
+                               </b-col> 
+                               <b-col class="col-6">
+                                    <span>012345678</span>
+                               </b-col> 
+                            </b-row>
+                            <b-row>
+                                <b-col class="col-6">
+                                     <span>Signature Date: </span>
+                                </b-col> 
+                                <b-col class="col-6">
+                                     <span>11/11/2023</span>
+                                </b-col> 
+                             </b-row>
+                        </b-col>
+                        <b-col class="col-12 mt-4">
+                            <b-row class="align-items-center">
+                                <b-col class="col-6">
+                                    <span>Signature: </span>
+                                </b-col>
+                                <b-col class="col-6">
+                                    <img :src="signatureBase64" alt="Signature">
+                                </b-col>
+                            </b-row>
+                        </b-col>
+                    </b-row>
+                </b-col>
+            </b-row>
+            <b-row v-else class="h-75 align-items-center">
+                <b-col class="col-12 text-center">
+                    <span class="font-weight-bold" style="font-size: 1.2rem;">No Data</span>
+                </b-col>
+            </b-row>
+        </b-container>
+    </script>
+    <script>
+
+        window.addEventListener("load", async () => {
+
+            const app = new Vue({
+                el: "#app",
+                template: "#appTemplate",
+                components: {
+                },
+                data() {
+                    return {
+                        isClientHasConsentForm: false,
+                        signatureBase64: null,
+                    }
+                },
+                methods: {
+                    async getClientInfo(){
+                        const clientId = window.top.Xrm.Page.data.entity.getId();
+
+                        const entityLogicalName = "crb5c_fow_customer";
+                        const options = new URLSearchParams({
+                            $select:'crb5c_no,crb5c_nricno,crb5c_neeurofitemail, crb5c_neeurofitassessmentdoneandreportrequested, crb5c_neeurofitstartdate, crb5c_neeurofitenddate, crb5c_neeurofitweekleftbeforeending',
+                            $filter:`crb5c_fow_customerid eq '${clientId}'`,
+                        });
+
+                        
+                        const { entities } = await window.top.Xrm.WebApi.retrieveMultipleRecords(entityLogicalName, '?'+options.toString());
+                        return entities[0];
+
+                    },
+                    async getConsentFormSignature(clientNric){
+                        const entityLogicalName = "crb5c_fowconsentagreement";
+                        const options = new URLSearchParams({
+                            $select:'crb5c_signatureimagenew',
+                            $filter:`crb5c_clientnric eq '${clientNric}'`,
+                        });
+
+                        const { entities } = await window.top.Xrm.WebApi.retrieveMultipleRecords(entityLogicalName, '?'+options.toString());
+
+                        if(!entities[0]){
+                            return null;
+                        }
+
+                        return entities[0];
+
+                    }
+                },
+                watch: {},
+                async mounted(){
+                    try {
+                        const client = await this.getClientInfo();
+                        const crb5c_nricno = client.crb5c_nricno;
+
+                        const consentFormInfo = await this.getConsentFormSignature(crb5c_nricno);
+                        console.log("consentFormInfo: ", consentFormInfo);
+                        if(!consentFormInfo){
+                            return;
+                        }
+
+                        this.isClientHasConsentForm = true;
+
+                        this.signatureBase64 = `data:image/png;base64,${consentFormInfo.crb5c_signatureimagenew}`;
+                        // this.signatureBase64 = consentFormInfo.crb5c_signatureimagenew;
+
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+            })
+
+
+        });
+
+    </script>
+
+    <style lang="scss" scoped=""></style>
+
+
+
+</body>
+</html>
